@@ -405,6 +405,7 @@ public class Semantico {
 			i+=1;
 			if(IDENT(i)){
 				if(ASem.Acao(108)){
+					//Depois de criar a procedure e adicionar o identificador da procedure na TS e subir 1 nivel...
 					if(DEFPAR(false)){
 						i+=1;
 						if(A.get(i).getNome().toLowerCase().equals(";")){

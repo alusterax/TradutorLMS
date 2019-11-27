@@ -70,11 +70,12 @@ public class AcaoSem {
 				break;
 			case 102:
 				try{
+					//Cria nova instrução AMEM com base nas variáveis criadas anteriormente
 					Instrucao lc = new Instrucao();
 					lc.setSeq(24);
 					lc.setCod("AMEM");
 					lc.setOp1(0);
-					lc.setOp2(n_var);
+					lc.setOp2(n_var+3);
 					principal.Tela.AL_Instr.add(lc);
 					n_var=0;
 					b=true;
@@ -108,7 +109,9 @@ public class AcaoSem {
 						}
 					}else{
 						if(aux_Tipo_Ident.equals("variável")){
+							//Valida se já tem essa variável na TS
 							if(Varrer(semantico.Semantico.A.get(semantico.Semantico.i).getNome())){
+								//Cria linha nova na tabela de simbolos
 								Var v = new Var();
 								v.setNome(semantico.Semantico.A.get(semantico.Semantico.i).getNome());
 								v.setCategoria(aux_Tipo_Ident);
@@ -147,9 +150,10 @@ public class AcaoSem {
 					Erro(i);
 				}
 				break;
-			case 105:
+			case 105: //Verifica se constante já foi declarada
 				try{
 					if(Varrer(semantico.Semantico.A.get(semantico.Semantico.i).getNome())){
+						//Cria linha nova na tabela de simbolos
 						Var v = new Var();
 						v.setNome(semantico.Semantico.A.get(semantico.Semantico.i).getNome());
 						v.setCategoria("constante");
@@ -168,6 +172,7 @@ public class AcaoSem {
 				break;
 			case 106:
 				try{
+					// Insere valor declarado na constante na tabela de Símbolos
 					TS.get(TS.size()-1).setGA(Integer.parseInt(semantico.Semantico.A.get(semantico.Semantico.i).getNome()));
 					b=true;
 				}catch (Exception e) {
@@ -176,6 +181,7 @@ public class AcaoSem {
 				break;
 			case 107:
 				try{
+					//Seta o tipo de identificador como variável, antes de declarar os identificadores
 					aux_Tipo_Ident="variável";
 					b=true;
 				}catch (Exception e) {
@@ -184,6 +190,8 @@ public class AcaoSem {
 				break;
 			case 108:
 				try{
+					System.out.println(108);
+					//Verifica se nome da procedure já está cadastrado na tabela de símbolos
 					if(Varrer(semantico.Semantico.A.get(semantico.Semantico.i).getNome())){
 						Var v = new Var();
 						v.setNome(semantico.Semantico.A.get(semantico.Semantico.i).getNome());
@@ -192,8 +200,13 @@ public class AcaoSem {
 						v.setGA(principal.Tela.AL_Instr.size()+1);
 						v.setGB(0);
 						v.setPROX(0);
+						//System.out.println(v.toString());
 						TS.add(v);
 						nvl+=1;
+						System.out.println("\n");
+						for (Var p : TS) {
+							System.out.println(p.toString());
+						}
 						b=true;
 					}else{
 						Erro(1);
@@ -204,6 +217,9 @@ public class AcaoSem {
 				break;
 			case 109:
 				try{
+					//Se está passando parâmetros
+					//Atualiza na TS a quantidade de parâmetros passado
+					//para a procedure em geralB
 					if(parmtr==true){
 						TS.get((TS.size())-(n_par)-1).setGB(n_par);
 						int j=1;
@@ -234,13 +250,15 @@ public class AcaoSem {
 					lc.setOp1(0);
 					lc.setOp2(n_par+1);
 					principal.Tela.AL_Instr.add(lc);
-					nvl-=1;
 					principal.Tela.AL_Instr.get(PROCEDURE[n_proc]).setOp2(principal.Tela.AL_Instr.size());
+					
 					for(int j=0; j<TS.size(); j++){
 						if(TS.get(j).getNivel()>nvl){
 							TS.remove(j);
 						}
 					}
+					
+					nvl-=1;
 					b=true;
 				}catch (Exception e) {
 					Erro(i);
@@ -248,6 +266,7 @@ public class AcaoSem {
 				break;
 			case 111:
 				try{
+					//Troca Tipo de Identificador para parâmetros, e sinaliza que está esperando por parâmetros.
 					aux_Tipo_Ident="parametros";
 					parmtr=true;
 					b=true;
@@ -351,8 +370,9 @@ public class AcaoSem {
 						Instrucao lc = new Instrucao();
 						lc.setSeq(25);
 						lc.setCod("CALL");
-						lc.setOp1(nvl-(TS.get(temp).getNivel()));
-						lc.setOp2(TS.get(temp).getGA());
+						lc.setOp1(nvl-(TS.get(temp).getNivel())); //nivel atual - Nivel da procedure
+						//TODO Dar uma olhada
+						lc.setOp2(TS.get(temp).getGA()); //Chamando procedure x
 						principal.Tela.AL_Instr.add(lc);
 						b=true;
 					}else{

@@ -41,11 +41,12 @@ public class Hipotetica{  //Classe que implementa a máquina hipotética.
 	  	S[2]=0; //RA
 	  	operador=0;
 	  	String leitura;
-	  	while (operador != 26) {//Enquanto instrução diferente de Pare
+	  	while (operador != 26) {
+	  		System.out.println(p);//Enquanto instrução diferente de Pare
 	  		operador = principal.Tela.AL_Instr.get(p).getSeq();
 	  		l = principal.Tela.AL_Instr.get(p).getOp1();
 	  		a = principal.Tela.AL_Instr.get(p).getOp2();
-	  		p=p+1;
+	  		p++;
 	  		
 	  		switch (operador){
 			       	case 1://RETU
